@@ -6,8 +6,6 @@ Calendario escolar interactivo del **IES San José de Badajoz** para el curso **
 
 ## 🌐 Acceso al calendario
 
-El calendario está preparado para desplegarse como página estática mediante **GitHub Pages**.
-
 **Repositorio:**  
 https://github.com/cmramosg01/calendario-2026-27-iessanjoseba
 
