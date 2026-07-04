@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario Escolar 2026/2027 - IES San José</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Fuentes oficiales -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+  
+  <!-- Iconografía -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            title: ['Montserrat', 'sans-serif'],
+          },
+          colors: {
+            ies: {
+              navy: '#00247d',
+              red: '#d62828',
+              green: '#2d6a4f',
+              ochre: '#d97706',
+              slate: '#0f172a'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --ies-navy: #00247d;
+      --ies-red: #d62828;
+      --ies-green: #2d6a4f;
+      --ies-orange: #d97706;
+      --ies-slate: #0f172a;
+      --page-bg: #f4f8fc;
+      --soft-bg: #f7faff;
+      --card-bg: #ffffff;
+      --line-soft: #dbe5f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(0, 36, 125, 0.06), transparent 34rem),
+        linear-gradient(180deg, #ffffff 0, var(--page-bg) 18rem, var(--page-bg) 100%);
+      color: var(--text-main);
+    }
+
+    .modal-transition {
+      transition: all 0.15s ease-out;
+    }
+
+    .calendar-header {
+      background: #ffffff;
+    }
+
+    .calendar-header__image {
+      width: min(100%, 1180px);
+      height: auto;
+      display: block;
+    }
+
+    .filter-bar {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .filter-btn {
+      border: 1px solid var(--line-soft);
+      background: #ffffff;
+      color: var(--text-muted);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    .filter-btn:hover,
+    .filter-btn--active {
+      border-color: rgba(0, 36, 125, 0.22);
+      background: var(--ies-navy);
+      color: #ffffff;
+      box-shadow: 0 8px 18px rgba(0, 36, 125, 0.14);
+    }
+
+    .category-card {
+      min-height: 3.25rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    .category-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .summary-card,
+    .month-card,
+    .modal-card {
+      border: 1px solid var(--line-soft);
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .month-card {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .month-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
+    }
+
+    .month-header {
+      background: linear-gradient(180deg, #ffffff 0%, var(--soft-bg) 100%);
+      border-bottom: 1px solid var(--line-soft);
+      margin: -1rem -1rem 0.85rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .calendar-day {
+      border-radius: 7px;
+    }
+
+    .site-footer {
+      background: rgba(255, 255, 255, 0.86);
+      border-top: 1px solid var(--line-soft);
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body class="text-slate-800 font-sans min-h-screen">
+
+  <header class="calendar-header">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-4 sm:pt-7 sm:pb-5 flex justify-center">
+      <img
+        class="calendar-header__image"
+        src="Calendario%20escolar%20202627.svg"
+        alt="Calendario escolar 2026/2027 del IES San José de Badajoz"
+      >
+    </div>
+  </header>
+
+  <section class="filter-bar sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-6 pt-2 pb-5 flex justify-center">
+      <div class="flex flex-wrap items-center justify-center gap-2">
+        <span class="text-xs text-slate-500 font-bold uppercase mr-2 text-center"><i class="fas fa-filter mr-1 text-ies-navy"></i> Filtrar por nivel:</span>
+        <button onclick="changeLevel('all')" class="tab-btn filter-btn filter-btn--active px-4 py-1.5 rounded-full text-xs font-bold transition-all" data-level="all">Todo el centro</button>
+        <button onclick="changeLevel('eso')" class="tab-btn filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all" data-level="eso">ESO</button>
+        <button onclick="changeLevel('bach')" class="tab-btn filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all" data-level="bach">Bachillerato</button>
+        <button onclick="changeLevel('fp')" class="tab-btn filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all" data-level="fp">Formación Profesional</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="max-w-7xl mx-auto px-6 pt-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Festividades -->
+      <button onclick="openSummary('festividades')" class="category-card flex items-center justify-center gap-2 p-3.5 bg-ies-red text-white font-bold text-xs transition-all select-none">
+        <i class="fas fa-calendar-day" aria-hidden="true"></i>
+        <span>Festividades</span>
+      </button>
+
+      <!-- Días no lectivos -->
+      <button onclick="openSummary('noLectivos')" class="category-card flex items-center justify-center gap-2 p-3.5 bg-ies-ochre text-white font-bold text-xs transition-all select-none">
+        <i class="fas fa-ban" aria-hidden="true"></i>
+        <span>Días no lectivos</span>
+      </button>
+
+      <!-- Inicios / Finalizaciones -->
+      <button onclick="openSummary('ensenanzas')" class="category-card flex items-center justify-center gap-2 p-3.5 bg-ies-green text-white font-bold text-xs transition-all select-none">
+        <i class="fas fa-school" aria-hidden="true"></i>
+        <span>Inicios / Finalizaciones</span>
+      </button>
+
+      <!-- Celebraciones pedagógicas -->
+      <button onclick="openSummary('celebraciones')" class="category-card flex items-center justify-center gap-2 p-3.5 bg-[#00247d] text-white font-bold text-xs transition-all select-none">
+        <i class="fas fa-star" aria-hidden="true"></i>
+        <span>Celebraciones pedagógicas</span>
+      </button>
+
+    </div>
+
+    <div id="summary-panel" class="summary-card hidden mt-4 overflow-hidden">
+      <div id="summary-header" class="p-4 text-white font-title font-bold text-xs uppercase flex justify-between items-center">
+        <span id="summary-title">Resumen</span>
+        <button onclick="closeSummary()" class="text-white/80 hover:text-white bg-black/10 hover:bg-black/20 rounded-full w-7 h-7 flex items-center justify-center transition-all" aria-label="Cerrar resumen">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+      <div class="p-5">
+        <div id="summary-body" class="text-sm text-slate-700 leading-relaxed"></div>
+        <div id="summary-filters" class="hidden mt-5 pt-4 border-t border-slate-100">
+          <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Filtrar inicios y finales en el calendario</span>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="changeLevel('all')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-900 text-white">Todo el centro</button>
+            <button onclick="changeLevel('eso')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">ESO</button>
+            <button onclick="changeLevel('bach')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Bachillerato</button>
+            <button onclick="changeLevel('fp')" class="px-3 py-1.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200">Formación Profesional</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <div id="months-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- Inyectado mediante JS -->
+    </div>
+  </main>
+
+  <footer class="site-footer py-8 text-xs">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p>
+        Fuente: <a href="https://www.educarex.es/sistema-educativo/calendario-escolar.html" target="_blank" class="text-ies-navy font-semibold underline hover:text-ies-red transition-colors">Calendario escolar 2026/27 de Extremadura</a>
+      </p>
+      <p>
+        Elaborado por: Cristina Ramos García · <a href="mailto:itedsanjoseba@sanjosebadajoz.com" class="text-ies-navy font-semibold hover:underline transition-all">itedsanjoseba@sanjosebadajoz.com</a>
+      </p>
+    </div>
+  </footer>
+
+  <div id="detail-modal" class="fixed inset-0 bg-slate-950/35 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="modal-card max-w-lg w-full overflow-hidden transform scale-95 modal-transition" id="modal-box">
+      <!-- Cabecera del modal (limpia sin etiquetas genéricas de IA) -->
+      <div id="modal-header" class="p-4 text-white font-title font-bold text-xs uppercase flex justify-between items-center">
+        <span id="modal-title">Detalle del día</span>
+        <button onclick="closeModal()" class="text-white/80 hover:text-white bg-black/10 hover:bg-black/20 rounded-full w-6 h-6 flex items-center justify-center transition-all">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+      <!-- Contenido del modal -->
+      <div class="p-5 space-y-4">
+        <div>
+          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Fecha Señalada</span>
+          <p id="modal-date" class="text-xs font-semibold text-slate-700 mt-0.5">00/00/0000</p>
+        </div>
+        <div>
+          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Descripción</span>
+          <p id="modal-desc" class="text-xs text-slate-600 leading-relaxed mt-1">Descripción del hito.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const summaryContent = {
+      festividades: {
+        title: "Festividades",
+        headerClass: "bg-ies-red",
+        html: `
+          <ul class="space-y-2 list-disc pl-5">
+            <li>8 de septiembre de 2026: Día de Extremadura.</li>
+            <li>12 de octubre de 2026: Día de la Fiesta Nacional de España.</li>
+            <li>8 de diciembre de 2026: Día de la Inmaculada Concepción.</li>
+            <li>8 y 9 de febrero de 2027: Carnavales.</li>
+            <li>24 de junio de 2027: San Juan, fiesta local de Badajoz.</li>
+          </ul>
+        `
+      },
+      noLectivos: {
+        title: "Días no lectivos",
+        headerClass: "bg-ies-ochre",
+        html: `
+          <ul class="space-y-2 list-disc pl-5">
+            <li>Navidad: Del 23 de diciembre de 2026 al 7 de enero de 2027, ambos inclusive.</li>
+            <li>Semana Santa: Del 22 de marzo de 2027 al 29 de marzo de 2027, ambos inclusive.</li>
+            <li>2 de noviembre de 2026: lunes siguiente al día de Todos los Santos.</li>
+            <li>7 de diciembre de 2026: lunes siguiente al día de la Constitución Española.</li>
+            <li>29 de enero de 2027: Día del Docente.</li>
+          </ul>
+        `
+      },
+      ensenanzas: {
+        title: "Inicio y fin de las enseñanzas",
+        headerClass: "bg-ies-green",
+        html: `
+          <ul class="space-y-2 list-disc pl-5">
+            <li>ESO y FP de Grado Básico: del 10 de septiembre al 18 de junio.</li>
+            <li>1º de Bachillerato: del 11 de septiembre al 17 de junio.</li>
+            <li>2º de Bachillerato: del 11 de septiembre al 7 de mayo.</li>
+            <li>FP de Grados Medio y Superior y Curso de especialización: del 10 de septiembre al 4 de junio.</li>
+            <li>Certificados Profesionales: del 1 de octubre al 4 de junio (previsión).</li>
+          </ul>
+          <p class="mt-5 mb-2 font-bold text-slate-800">Entrega de calificaciones</p>
+          <ul class="space-y-2 list-disc pl-5">
+            <li>17 de mayo: Evaluación ordinaria de 2º Bachillerato.</li>
+            <li>10 de junio: Evaluación ordinaria de los Ciclos Formativos de grados Básico, Medio y Superior.</li>
+            <li>16 de junio: Evaluación extraordinaria de 2º Bachillerato.</li>
+            <li>17 de junio: Evaluación ordinaria de 1º Bachillerato.</li>
+            <li>21 de junio: Evaluación extraordinaria de los Ciclos Formativos de grados Básico, Medio y Superior.</li>
+            <li>23 de junio: Evaluación de ESO y extraordinaria de 1º Bachillerato.</li>
+          </ul>
+        `,
+        hasFilters: true
+      },
+      celebraciones: {
+        title: "Celebraciones pedagógicas",
+        headerClass: "bg-[#00247d]",
+        html: `
+          <p class="font-semibold text-slate-800">19 de marzo de 2027: Día del Centro.</p>
+          <p class="mt-2 text-slate-600">El resto de celebraciones pedagógicas transversales se pueden consultar en los días señalados en color azul claro.</p>
+        `
+      }
+    };
+
+    const calendarEvents = {
+      festivos: {
+        "2026-09-08": "Día de Extremadura",
+        "2026-10-12": "Día de la Fiesta Nacional de España",
+        "2026-12-08": "Día de la Inmaculada Concepción",
+        "2027-02-08": "Carnavales",
+        "2027-02-09": "Carnavales",
+        "2027-06-24": "San Juan, fiesta local de Badajoz"
+      },
+      noLectivos: {
+        "2026-11-02": "Lunes siguiente al día de Todos los Santos",
+        "2026-12-07": "Lunes siguiente al día de la Constitución Española",
+        "2026-12-23": "Navidad",
+        "2026-12-24": "Navidad",
+        "2026-12-25": "Navidad",
+        "2026-12-28": "Navidad",
+        "2026-12-29": "Navidad",
+        "2026-12-30": "Navidad",
+        "2026-12-31": "Navidad",
+        "2027-01-01": "Navidad",
+        "2027-01-04": "Navidad",
+        "2027-01-05": "Navidad",
+        "2027-01-06": "Navidad",
+        "2027-01-07": "Navidad",
+        "2027-01-29": {
+          label: "Día del Docente",
+          desc: "Día no lectivo. Coincide con el Día Escolar de la Paz y la No Violencia: Día lectivo que promueve la reflexión sobre los valores de la tolerancia, el diálogo y la participación social como medios de educación para el conflicto."
+        },
+        "2027-03-22": "Semana Santa",
+        "2027-03-23": "Semana Santa",
+        "2027-03-24": "Semana Santa",
+        "2027-03-25": "Semana Santa",
+        "2027-03-26": "Semana Santa",
+        "2027-03-29": "Semana Santa"
+      },
+      enseñanzas: {
+        "2026-09-10": { label: "Inicio de actividades lectivas (ESO y FP)", levels: ["eso", "fp"], desc: "Comienzo del curso escolar para Educación Secundaria Obligatoria y ciclos de Formación Profesional." },
+        "2026-09-11": { label: "Inicio de actividades lectivas (Bachillerato)", levels: ["bach"], desc: "Comienzo del curso escolar para primer y segundo curso de Bachillerato." },
+        "2026-10-01": { label: "Inicio previsto de Certificados Profesionales", levels: ["fp"], desc: "Inicio previsto de los Certificados Profesionales." },
+        "2027-05-07": { label: "Finalización de actividades lectivas (2º Bachillerato)", levels: ["bach"], desc: "Fin de curso para el alumnado de segundo curso de Bachillerato." },
+        "2027-05-17": { label: "Evaluación ordinaria de 2º Bachillerato", levels: ["bach"], desc: "Entrega de calificaciones de la evaluación ordinaria de 2º Bachillerato." },
+        "2027-06-04": { label: "Finalización de actividades lectivas (FP)", levels: ["fp"], desc: "Fin de clases ordinarias para Ciclos Formativos de Grado Medio, Superior y de Especialización." },
+        "2027-06-10": { label: "Evaluación ordinaria de Ciclos Formativos", levels: ["fp"], desc: "Entrega de calificaciones de la evaluación ordinaria de los Ciclos Formativos de grados Básico, Medio y Superior." },
+        "2027-06-16": { label: "Evaluación extraordinaria de 2º Bachillerato", levels: ["bach"], desc: "Entrega de calificaciones de la evaluación extraordinaria de 2º Bachillerato." },
+        "2027-06-17": { label: "Evaluación ordinaria de 1º Bachillerato", levels: ["bach"], desc: "Entrega de calificaciones de la evaluación ordinaria de 1º Bachillerato." },
+        "2027-06-18": { label: "Finalización de actividades lectivas (ESO y FP Grado Básico)", levels: ["eso", "fp"], desc: "Fin del periodo lectivo ordinario para Educación Secundaria Obligatoria y ciclos de Grado Básico." },
+        "2027-06-21": { label: "Evaluación extraordinaria de Ciclos Formativos", levels: ["fp"], desc: "Entrega de calificaciones de la evaluación extraordinaria de los Ciclos Formativos de grados Básico, Medio y Superior." },
+        "2027-06-23": { label: "Evaluación de ESO y extraordinaria de 1º Bachillerato", levels: ["eso", "bach"], desc: "Entrega de calificaciones de ESO y de la evaluación extraordinaria de 1º Bachillerato." }
+      },
+      celebraciones: {
+        "2026-10-16": { label: "Día Escolar de la Solidaridad con los Países Empobrecidos", desc: "Día lectivo que persigue despertar la sensibilidad ante las causas de la pobreza y el hambre en el mundo, la desigualdad en el desarrollo económico y social y los desequilibrios “Norte-Sur”." },
+        "2026-11-20": { label: "Día Escolar de los Derechos y Deberes de la Infancia", desc: "Día lectivo que atiende a la protección y la asistencia necesaria para que el alumnado asuma sus responsabilidades futuras como adultos en la vida comunitaria." },
+        "2026-12-03": { label: "Día Internacional de las Personas con Discapacidad", desc: "Día lectivo que promueve los derechos y el bienestar de las personas con discapacidades en todos los ámbitos de la sociedad y el desarrollo, así como concienciar sobre su situación en todos los aspectos de la vida política, social, económica y cultural." },
+        "2026-12-04": { label: "Día Escolar de la Constitución y los Derechos Humanos", desc: "Día lectivo que impulsa el conocimiento y el ejercicio de los valores que hacen posible la convivencia de las personas, mediante el respeto a todos los derechos y deberes fundamentales." },
+        "2027-01-27": { label: "Día escolar de Conmemoración del Holocausto y del reconocimiento de la Concordia y la Convivencia", desc: "Día lectivo que permite que el alumnado conozca los episodios más trágicos de la historia y se recuerde a todas las víctimas de cualquier forma de persecución ejercida por motivos ideológicos, raciales, políticos, religiosos o de cualquier otra índole, acaecidas en Europa y España. El fin es salvaguardar y difundir los valores democráticos y los derechos y libertades fundamentales de todas las personas." },
+        "2027-01-29": { label: "Día Escolar de la Paz y la No Violencia", desc: "Día lectivo que promueve la reflexión sobre los valores de la tolerancia, el diálogo y la participación social como medios de educación para el conflicto." },
+        "2027-02-11": { label: "Día Escolar Internacional de la mujer y la niña en la Ciencia", desc: "Día lectivo que busca visibilizar el problema de la brecha de género en las ciencias (STEM) e impulsar y fomentar la participación equitativa en la ciencia de nuestras alumnas." },
+        "2027-02-22": { label: "Semana de la Escuela en Extremadura", desc: "Día lectivo que fomenta la formación en la cultura y el patrimonio de nuestra región y el reconocimiento de las particularidades y la singularidad de la Escuela Rural; y que favorece la participación inclusiva, activa e integradora de los centros en la vida social y cultural de su entorno." },
+        "2027-02-23": { label: "Semana de la Escuela en Extremadura", desc: "Día lectivo que fomenta la formación en la cultura y el patrimonio de nuestra región y el reconocimiento de las particularidades y la singularidad de la Escuela Rural; y que favorece la participación inclusiva, activa e integradora de los centros en la vida social y cultural de su entorno." },
+        "2027-02-24": { label: "Semana de la Escuela en Extremadura", desc: "Día lectivo que fomenta la formación en la cultura y el patrimonio de nuestra región y el reconocimiento de las particularidades y la singularidad de la Escuela Rural; y que favorece la participación inclusiva, activa e integradora de los centros en la vida social y cultural de su entorno." },
+        "2027-02-25": { label: "Semana de la Escuela en Extremadura", desc: "Día lectivo que fomenta la formación en la cultura y el patrimonio de nuestra región y el reconocimiento de las particularidades y la singularidad de la Escuela Rural; y que favorece la participación inclusiva, activa e integradora de los centros en la vida social y cultural de su entorno." },
+        "2027-02-26": { label: "Semana de la Escuela en Extremadura", desc: "Día lectivo que fomenta la formación en la cultura y el patrimonio de nuestra región y el reconocimiento de las particularidades y la singularidad de la Escuela Rural; y que favorece la participación inclusiva, activa e integradora de los centros en la vida social y cultural de su entorno." },
+        "2027-03-01": { label: "Día Escolar de la Protección Civil y las Emergencias", desc: "Día lectivo que permite aprender tareas y acciones necesarias para la consecución de un sistema global eficiente para la protección de las personas en el ámbito educativo." },
+        "2027-03-08": { label: "Día Internacional de la Mujer", desc: "Día lectivo que conmemora la lucha de las mujeres por eliminar toda forma de discriminación, independientemente de su forma o condición, en cualquier ámbito de la vida y, singularmente, en las esferas política, civil, laboral, económica, social, educativa y cultural." },
+        "2027-03-11": { label: "Día Escolar en Memoria de las Víctimas del Terrorismo", desc: "Día lectivo que sensibiliza sobre las consecuencias trágicas del terrorismo tanto para la vida de las personas como para la sociedad en su conjunto y que fomenta el rechazo de la violencia y su deslegitimación y el respeto y la consideración de las víctimas." },
+        "2027-03-19": { label: "Día del Centro (y Día Escolar del Agua)", desc: "Día del Centro IES San José de Badajoz." },
+        "2027-04-07": { label: "Día Escolar de la Salud", desc: "Día lectivo que promueve la realización de actividades relativas a la educación para el consumo moderado, la educación vial, la sensibilización en torno a los problemas relacionados con la alimentación, el alcohol, sida, drogas, tabaco, etc." },
+        "2027-04-19": { label: "Semana Escolar del Libro", desc: "Día lectivo que busca desarrollar el gusto por la lectura, la formación de hábitos intelectuales y el aprecio de la cultura en general." },
+        "2027-04-20": { label: "Semana Escolar del Libro", desc: "Día lectivo que busca desarrollar el gusto por la lectura, la formación de hábitos intelectuales y el aprecio de la cultura en general." },
+        "2027-04-21": { label: "Semana Escolar del Libro", desc: "Día lectivo que busca desarrollar el gusto por la lectura, la formación de hábitos intelectuales y el aprecio de la cultura en general." },
+        "2027-04-22": { label: "Semana Escolar del Libro", desc: "Día lectivo que busca desarrollar el gusto por la lectura, la formación de hábitos intelectuales y el aprecio de la cultura en general." },
+        "2027-04-23": { label: "Semana Escolar del Libro", desc: "Día lectivo que busca desarrollar el gusto por la lectura, la formación de hábitos intelectuales y el aprecio de la cultura en general." },
+        "2027-04-29": { label: "Día Escolar Europeo de la Solidaridad y Convivencia con los Mayores", desc: "Día lectivo que establece un diálogo intergeneracional de convivencia entre jóvenes y personas mayores que favorezca la comprensión mutua, la colaboración y potencie el valor de los mayores como sujetos activos." },
+        "2027-05-10": { label: "Día Escolar de Europa", desc: "Día lectivo que promueve y fomenta el desarrollo de los valores universales de la Unión Europea y favorece la cooperación y la solidaridad entre los pueblos celebrando la paz y la unidad de Europa." },
+        "2027-05-14": { label: "Día Escolar de las Familias", desc: "Día lectivo que tiene por objeto concienciar sobre el papel fundamental de las familias en la educación del alumnado, promoviendo a su vez, la visibilización y el respeto de las distintas estructuras familiares presentes en nuestra sociedad." },
+        "2027-05-17": { label: "Día Internacional contra la Homofobia, la Transfobia y la Bifobia", desc: "Día lectivo que tiene como objetivo dar a conocer y sensibilizar a nuestro alumnado sobre la diversidad afectivo-sexual y el propio conocimiento de su sexualidad, así como la persistencia de la discriminación de la que, todavía hoy, son objeto las personas homosexuales, lesbianas, bisexuales y transexuales, y para comprometerlos en la defensa de sus derechos." },
+        "2027-06-04": { label: "Día Escolar del Medio Ambiente y la Economía Verde y Circular", desc: "Día lectivo que tiene como finalidad que el alumnado y la comunidad desarrollen actitudes de valoración e interés por los problemas de la degradación de la Naturaleza y por la conservación del Medio Ambiente." },
+        "2027-06-10": { label: "Día Escolar de la Cultura Hispano-Lusa", desc: "Día lectivo que favorece que las comunidades educativas de Portugal y de Extremadura desarrollen actividades que profundicen en el acercamiento de ambos pueblos." }
+      }
+    };
+
+    const monthsData = [
+      { year: 2026, month: 8, name: "Septiembre" }, { year: 2026, month: 9, name: "Octubre" }, { year: 2026, month: 10, name: "Noviembre" }, { year: 2026, month: 11, name: "Diciembre" },
+      { year: 2027, month: 0, name: "Enero" }, { year: 2027, month: 1, name: "Febrero" }, { year: 2027, month: 2, name: "Marzo" }, { year: 2027, month: 3, name: "Abril" },
+      { year: 2027, month: 4, name: "Mayo" }, { year: 2027, month: 5, name: "Junio" }, { year: 2027, month: 6, name: "Julio" }, { year: 2027, month: 7, name: "Agosto" }
+    ];
+
+    let currentLevel = 'all';
+
+    function renderCalendar() {
+      const grid = document.getElementById('months-grid');
+      grid.innerHTML = '';
+
+      monthsData.forEach(mInfo => {
+        const monthCard = document.createElement('div');
+        monthCard.className = "month-card p-4 flex flex-col justify-between";
+
+        let html = `
+          <div class="month-header flex justify-between items-center">
+            <h3 class="font-title font-bold text-xs text-ies-navy uppercase tracking-wider">${mInfo.name}</h3>
+            <span class="text-[10px] font-mono font-bold text-slate-400">${mInfo.year}</span>
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-extrabold text-slate-400 mb-1">
+            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="grid grid-cols-7 gap-1 text-center">
+        `;
+
+        const startDay = (new Date(mInfo.year, mInfo.month, 1).getDay() + 6) % 7;
+        const totalDays = new Date(mInfo.year, mInfo.month + 1, 0).getDate();
+
+        for (let i = 0; i < startDay; i++) {
+          html += `<span class="h-7 block"></span>`;
+        }
+
+        for (let d = 1; d <= totalDays; d++) {
+          const iso = `${mInfo.year}-${String(mInfo.month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+          const isWeekend = new Date(mInfo.year, mInfo.month, d).getDay() === 0 || new Date(mInfo.year, mInfo.month, d).getDay() === 6;
+
+          let dayStyle = "text-slate-700 font-medium hover:bg-slate-100 cursor-pointer";
+          let action = `onclick="openModal('${iso}')"`;
+
+          if (isWeekend) {
+            dayStyle = "text-slate-300 font-normal bg-slate-50 pointer-events-none";
+            action = "";
+          }
+
+          if (calendarEvents.festivos[iso]) {
+            dayStyle = "bg-ies-red text-white font-bold shadow-sm hover:opacity-90";
+          } else if (calendarEvents.noLectivos[iso]) {
+            dayStyle = "bg-ies-ochre text-white font-bold shadow-sm hover:opacity-90";
+          } else if (calendarEvents.enseñanzas[iso]) {
+            const ev = calendarEvents.enseñanzas[iso];
+            const levelMatch = currentLevel === 'all' || ev.levels.includes(currentLevel);
+            if (levelMatch) {
+              dayStyle = "bg-ies-green text-white font-bold shadow-sm hover:opacity-90";
+            } else {
+              dayStyle = "text-slate-300 bg-slate-100/50 opacity-40 pointer-events-none";
+              action = "";
+            }
+          } else if (calendarEvents.celebraciones[iso]) {
+            dayStyle = "bg-sky-50 border border-sky-400 text-sky-800 font-bold hover:bg-sky-100";
+          }
+
+          html += `<button ${action} class="calendar-day h-7 text-xs flex items-center justify-center transition-all ${dayStyle}">${d}</button>`;
+        }
+
+        html += `</div>`;
+        monthCard.innerHTML = html;
+        grid.appendChild(monthCard);
+      });
+    }
+
+    function changeLevel(level) {
+      currentLevel = level;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-level') === level) {
+          btn.className = "tab-btn filter-btn filter-btn--active px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+        } else {
+          btn.className = "tab-btn filter-btn px-4 py-1.5 rounded-full text-xs font-bold transition-all";
+        }
+      });
+      renderCalendar();
+    }
+
+    function openSummary(type) {
+      const summary = summaryContent[type];
+      if (!summary) return;
+
+      const panel = document.getElementById('summary-panel');
+      document.getElementById('summary-header').className = `p-4 text-white font-title font-bold text-xs uppercase flex justify-between items-center ${summary.headerClass}`;
+      document.getElementById('summary-title').innerText = summary.title;
+      document.getElementById('summary-body').innerHTML = summary.html;
+
+      const filters = document.getElementById('summary-filters');
+      if (summary.hasFilters) {
+        filters.classList.remove('hidden');
+      } else {
+        filters.classList.add('hidden');
+      }
+
+      panel.classList.remove('hidden');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function closeSummary() {
+      document.getElementById('summary-panel').classList.add('hidden');
+    }
+
+    function openModal(iso) {
+      let title = "";
+      let desc = "";
+      let headerClass = "";
+
+      if (calendarEvents.festivos[iso]) {
+        title = "Festividades";
+        desc = calendarEvents.festivos[iso];
+        headerClass = "bg-ies-red";
+      } else if (calendarEvents.noLectivos[iso]) {
+        const ev = calendarEvents.noLectivos[iso];
+        title = typeof ev === 'string' ? "Días no lectivos" : ev.label;
+        desc = typeof ev === 'string' ? ev : ev.desc;
+        headerClass = "bg-ies-ochre";
+      } else if (calendarEvents.enseñanzas[iso]) {
+        title = calendarEvents.enseñanzas[iso].label;
+        desc = calendarEvents.enseñanzas[iso].desc;
+        headerClass = "bg-ies-green";
+      } else if (calendarEvents.celebraciones[iso]) {
+        title = calendarEvents.celebraciones[iso].label;
+        desc = calendarEvents.celebraciones[iso].desc;
+        headerClass = "bg-[#00247d]";
+      } else {
+        return;
+      }
+
+      document.getElementById('modal-header').className = `p-4 text-white font-title font-bold text-xs uppercase flex justify-between items-center ${headerClass}`;
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-date').innerText = iso.split('-').reverse().join('/');
+      document.getElementById('modal-desc').innerText = desc;
+
+      const modal = document.getElementById('detail-modal');
+      const box = document.getElementById('modal-box');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      setTimeout(() => {
+        box.classList.remove('scale-95');
+        box.classList.add('scale-100');
+      }, 30);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detail-modal');
+      const box = document.getElementById('modal-box');
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.remove('flex');
+        modal.classList.add('hidden');
+      }, 100);
+    }
+
+    window.onload = renderCalendar;
+  </script>
+</body>
+</html>
