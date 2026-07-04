@@ -1,4 +1,4 @@
-# 📅 Calendario escolar 2026/2027 de ### IES San José de Badajoz
+# 📅 Calendario escolar 2026/2027 de IES San José de Badajoz
 
 Calendario escolar interactivo del **IES San José de Badajoz** para el curso **2026/2027**, elaborado a partir de la normativa del calendario escolar de Extremadura y adaptado a las enseñanzas del centro.
 
