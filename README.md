@@ -49,5 +49,4 @@ itedsanjoseba@sanjosebadajoz.com
 ## ⚠️ Aviso
 
 Este calendario es una adaptación visual e interactiva para facilitar la consulta por parte de la comunidad educativa del **IES San José de Badajoz**.
-
 Para cualquier comprobación normativa, debe consultarse siempre la fuente oficial publicada por la administración educativa.
