@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "Calendario escolar interactivo 2026/2027 - IES San José",
+  "short_name": "Calendario IES",
+  "description": "Calendario escolar interactivo 2026/2027 del IES San José de Badajoz.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f8fc",
+  "theme_color": "#00247d",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192b.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512b.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
